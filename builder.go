@@ -5,21 +5,21 @@ import (
 	"log/slog"
 )
 
-type Builder struct {
+type builder struct {
 	kind    handerKind
 	options *slog.HandlerOptions
 }
 
-func newBuilder() *Builder {
-	return &Builder{
+func newBuilder() *builder {
+	return &builder{
 		kind:    handlerKindTextHandler,
 		options: &slog.HandlerOptions{},
 	}
 }
 
-type Option = func(*Builder)
+type Option = func(*builder)
 
-func (b *Builder) build(w io.Writer) slog.Handler {
+func (b *builder) build(w io.Writer) slog.Handler {
 	switch b.kind {
 	case handlerKindTextHandler:
 		return slog.NewTextHandler(w, b.options)
@@ -37,5 +37,5 @@ const (
 	handlerKindJSONHandler handerKind = 1
 )
 
-func Text() Option { return func(b *Builder) { b.kind = handlerKindTextHandler } }
-func JSON() Option { return func(b *Builder) { b.kind = handlerKindJSONHandler } }
+func Text() Option { return func(b *builder) { b.kind = handlerKindTextHandler } }
+func JSON() Option { return func(b *builder) { b.kind = handlerKindJSONHandler } }
