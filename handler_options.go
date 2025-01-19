@@ -2,16 +2,19 @@ package slogopts
 
 import "log/slog"
 
+// Set the level of the handler.
 func Level(lv slog.Leveler) Option {
 	return func(o *builder) { o.options.Level = lv }
 }
 
+// Set AddSource to true to add source information to the log entry.
 func AddSource(v bool) Option {
 	return func(o *builder) { o.options.AddSource = v }
 }
 
 type ReplaceAttrFunc = func(groups []string, a slog.Attr) slog.Attr
 
+// Set ReplaceAttr function to replace the attribute.
 func ReplaceAttr(fn ReplaceAttrFunc) Option {
 	return func(o *builder) { o.options.ReplaceAttr = fn }
 }
