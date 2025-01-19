@@ -43,7 +43,7 @@ func TestNew(t *testing.T) {
 		assert.Equal(t, "hello", d["msg"])
 		assert.Equal(t, "INFO", d["level"])
 	})
-	t.Run("Replace time and level", func(t *testing.T) {
+	t.Run("ReplaceAttr", func(t *testing.T) {
 		replTime := func(groups []string, a slog.Attr) slog.Attr {
 			if a.Key == slog.TimeKey {
 				return slog.Attr{Key: "t", Value: a.Value}
@@ -56,16 +56,40 @@ func TestNew(t *testing.T) {
 			}
 			return a
 		}
-		buf := bytes.NewBuffer(nil)
-		logger := New(buf, JSON(), ReplaceAttr(replTime, replLevel))
-		logger.Info("hello")
-		var d map[string]interface{}
-		assert.NoError(t, json.Unmarshal(buf.Bytes(), &d))
-		assert.Equal(t, "hello", d["msg"])
-		assert.Empty(t, d["time"])
-		assert.Empty(t, d["level"])
-		assert.NotEmpty(t, d["t"])
-		assert.NotEmpty(t, d["lv"])
+		t.Run("no arguments", func(t *testing.T) {
+			buf := bytes.NewBuffer(nil)
+			logger := New(buf, JSON(), ReplaceAttr())
+			logger.Info("hello")
+			var d map[string]interface{}
+			assert.NoError(t, json.Unmarshal(buf.Bytes(), &d))
+			assert.Equal(t, "hello", d["msg"])
+			assert.NotEmpty(t, d["time"])
+			assert.NotEmpty(t, d["level"])
+		})
+		t.Run("time", func(t *testing.T) {
+			buf := bytes.NewBuffer(nil)
+			logger := New(buf, JSON(), ReplaceAttr(replTime))
+			logger.Info("hello")
+			var d map[string]interface{}
+			assert.NoError(t, json.Unmarshal(buf.Bytes(), &d))
+			assert.Equal(t, "hello", d["msg"])
+			assert.Empty(t, d["time"])
+			assert.NotEmpty(t, d["level"])
+			assert.NotEmpty(t, d["t"])
+			assert.Empty(t, d["lv"])
+		})
+		t.Run("time and level", func(t *testing.T) {
+			buf := bytes.NewBuffer(nil)
+			logger := New(buf, JSON(), ReplaceAttr(replTime, replLevel))
+			logger.Info("hello")
+			var d map[string]interface{}
+			assert.NoError(t, json.Unmarshal(buf.Bytes(), &d))
+			assert.Equal(t, "hello", d["msg"])
+			assert.Empty(t, d["time"])
+			assert.Empty(t, d["level"])
+			assert.NotEmpty(t, d["t"])
+			assert.NotEmpty(t, d["lv"])
+		})
 	})
 	t.Run("AddSource", func(t *testing.T) {
 		buf := bytes.NewBuffer(nil)
