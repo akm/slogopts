@@ -57,7 +57,7 @@ func TestNew(t *testing.T) {
 			return a
 		}
 		buf := bytes.NewBuffer(nil)
-		logger := New(buf, JSON(), ReplaceAttr(MergeReplaceAttr(replTime, replLevel)))
+		logger := New(buf, JSON(), ReplaceAttr(replTime, replLevel))
 		logger.Info("hello")
 		var d map[string]interface{}
 		assert.NoError(t, json.Unmarshal(buf.Bytes(), &d))

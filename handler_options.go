@@ -15,11 +15,13 @@ func AddSource(v bool) Option {
 type replaceAttrFunc = func(groups []string, a slog.Attr) slog.Attr
 
 // Set ReplaceAttr function to replace the attribute.
-func ReplaceAttr(fn replaceAttrFunc) Option {
-	return func(o *builder) { o.options.ReplaceAttr = fn }
+func ReplaceAttr(funcs ...replaceAttrFunc) Option {
+	return func(o *builder) {
+		o.options.ReplaceAttr = mergeReplaceAttr(funcs...)
+	}
 }
 
-func MergeReplaceAttr(funcs ...replaceAttrFunc) replaceAttrFunc {
+func mergeReplaceAttr(funcs ...replaceAttrFunc) replaceAttrFunc {
 	return func(groups []string, a slog.Attr) slog.Attr {
 		for _, fn := range funcs {
 			a = fn(groups, a)
