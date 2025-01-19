@@ -22,6 +22,12 @@ func ReplaceAttr(funcs ...replaceAttrFunc) Option {
 }
 
 func mergeReplaceAttr(funcs ...replaceAttrFunc) replaceAttrFunc {
+	if len(funcs) == 0 {
+		return func(groups []string, a slog.Attr) slog.Attr { return a }
+	}
+	if len(funcs) == 1 {
+		return funcs[0]
+	}
 	return func(groups []string, a slog.Attr) slog.Attr {
 		for _, fn := range funcs {
 			a = fn(groups, a)
