@@ -6,7 +6,7 @@ import (
 )
 
 func NewHandler(w io.Writer, opts ...Option) slog.Handler {
-	b := &Builder{}
+	b := newBuilder()
 	for _, opt := range opts {
 		opt(b)
 	}

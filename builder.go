@@ -10,6 +10,13 @@ type Builder struct {
 	options *slog.HandlerOptions
 }
 
+func newBuilder() *Builder {
+	return &Builder{
+		kind:    handlerKindTextHandler,
+		options: &slog.HandlerOptions{},
+	}
+}
+
 type Option = func(*Builder)
 
 func (b *Builder) build(w io.Writer) slog.Handler {
